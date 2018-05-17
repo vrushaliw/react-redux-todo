@@ -5,9 +5,9 @@ class SmallItem extends React.Component {
   render () {
     return (
       GlobalMetadata[this.props.collection_name].columns.map(function(column){
-        return (<tr>
+        return (<tr key={this.props.record.id}>
           <td>{this.props.record[column]}</td>
-          <a href="/todo_lists/{this.props.record.id}/edit">Edit</a>
+          <td><a href="/todo_lists/{this.props.record.id}/edit">Edit</a></td>
         </tr>)
       }.bind(this))
 

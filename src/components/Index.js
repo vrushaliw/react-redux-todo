@@ -1,6 +1,8 @@
 import React from 'react';
 import {SmallItem} from './SmallItem'
 import GlobalMetadata from '../global_metadata'
+import { store } from '../App'
+import {fetchRecords} from '../actions/default'
 
 class Index extends React.Component {
   constructor(props) {
@@ -18,15 +20,9 @@ class Index extends React.Component {
     }
     if(collection_name !== ""){
       this.setState({collection_name: collection_name})
-      var xhttp = new XMLHttpRequest();
-      var self = this;
-      xhttp.onreadystatechange = function() {
-        if (this.readyState === 4 && this.status === 200) {
-         self.setState({records: JSON.parse(this.responseText)})
-        }
-      };
-      xhttp.open("GET", GlobalMetadata[collection_name].url, true);
-      xhttp.send();
+      store.dispatch(fetchRecords(GlobalMetadata[collection_name].url)).then(() => {
+        this.setState(store.getState())
+      })
 
     }
   }
@@ -34,17 +30,16 @@ class Index extends React.Component {
   render () {
     var rows = []
     if(typeof(GlobalMetadata[this.state.collection_name]) !== "undefined"){
-      rows = [<tr>
+      rows = [<thead><tr>
           {GlobalMetadata[this.state.collection_name].columns.map(function(column){
             return <td>{column}</td>
           })}
           <td>Actions</td>
-        </tr>]
-      rows = [...rows, this.state.records.map(function(record, i) {
-        return <SmallItem record={record} collection_name={this.state.collection_name} />;
-      }.bind(this))];
+        </tr></thead>]
+      rows = [...rows, <tbody>{this.state.records.map(function(record, i) {
+        return <SmallItem record={record} collection_name={this.state.collection_name} key={record.id}/>;
+      }.bind(this))}</tbody>];
     }
-    debugger
     return <table>{rows}</table>;
   };
 };

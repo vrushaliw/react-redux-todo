@@ -14,4 +14,4 @@ class EditRecord extends React.Component {
     );
   }
 };
-export {EditRecord};
+export default EditRecord;

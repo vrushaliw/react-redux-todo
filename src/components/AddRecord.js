@@ -1,29 +1,37 @@
 import React from "react"
-import GlobalMetadata from '../global_metadata'
+import { addRecord } from '../actions/default'
+import { store } from '../App'
+import { connect } from 'react-redux'
 
-class EditRecord extends React.Component {
+class AddRecord extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {content: ''};
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(event) {
+    this.setState({content: event.target.value.toUpperCase()});
+  }
+
+
+  handleSubmit(e){
+    e.preventDefault()
+    store.dispatch(addRecord(this.state.content))
+  }
   render () {
-    return (
-      GlobalMetadata[this.props.collection_name].columns.map(function(column){
-        return <div>
-          <form onSubmit={e => {
-            e.preventDefault()
-            if (!input.value.trim()) {
-              return
-            }
-            dispatch(addTodo(input.value, "sdjkfhsdjkf"))
-            input.value = ''
-          }}>
-            <input ref={node => input = node} />
-            <button type="submit">
-              Add Todo
-            </button>
-          </form>
-        </div>
-
-      }.bind(this))
-
-    );
+    return <div>
+      <form onSubmit={this.handleSubmit} >
+        <input type="text" name="content" onChange={this.handleChange} />
+        <button type="submit">
+          Add Todo
+        </button>
+      </form>
+    </div>
   }
 };
-export {EditRecord};
+AddRecord = connect()(AddRecord)
+
+export default AddRecord;
